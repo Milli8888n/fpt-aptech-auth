@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nhật ký kiểm toán (Audit Logs)')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container-fluid px-4 py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 fw-bold mb-1"><i class="bi bi-journal-text text-danger me-2"></i>Nhật ký Kiểm toán Hệ thống (Audit Logs)</h2>
+            <p class="text-muted mb-0">Theo dõi toàn bộ các sự kiện đăng nhập, đăng xuất, đổi mật khẩu, phân quyền và khóa tài khoản</p>
+        </div>
+        <span class="badge bg-light text-dark border px-3 py-2">
+            Tổng cộng: <strong th:text="${auditPage.totalElements}">0</strong> bản ghi
+        </span>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card p-3 mb-4 shadow-sm">
+        <form th:action="@{/admin/audit-logs}" method="get" class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <input type="text" name="email" class="form-control" placeholder="Tìm theo email người dùng..." th:value="${email}">
+            </div>
+            <div class="col-md-3">
+                <select name="action" class="form-select">
+                    <option value="">-- Tất cả hành động --</option>
+                    <option value="LOGIN_SUCCESS" th:selected="${action == 'LOGIN_SUCCESS'}">LOGIN_SUCCESS (Đăng nhập thành công)</option>
+                    <option value="LOGIN_FAILED" th:selected="${action == 'LOGIN_FAILED'}">LOGIN_FAILED (Đăng nhập thất bại)</option>
+                    <option value="ACCOUNT_LOCKED" th:selected="${action == 'ACCOUNT_LOCKED'}">ACCOUNT_LOCKED (Khóa do sai pass)</option>
+                    <option value="2FA_ENABLED" th:selected="${action == '2FA_ENABLED'}">2FA_ENABLED (Bật 2FA)</option>
+                    <option value="PASSWORD_CHANGED" th:selected="${action == 'PASSWORD_CHANGED'}">PASSWORD_CHANGED (Đổi mật khẩu)</option>
+                    <option value="ADMIN_LOCK_USER" th:selected="${action == 'ADMIN_LOCK_USER'}">ADMIN_LOCK_USER (Admin khóa)</option>
+                    <option value="ADMIN_DISABLE_USER" th:selected="${action == 'ADMIN_DISABLE_USER'}">ADMIN_DISABLE_USER (Admin vô hiệu hóa)</option>
+                    <option value="ADMIN_CHANGE_ROLE" th:selected="${action == 'ADMIN_CHANGE_ROLE'}">ADMIN_CHANGE_ROLE (Admin đổi quyền)</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">-- Tất cả kết quả --</option>
+                    <option value="SUCCESS" th:selected="${status == 'SUCCESS'}">SUCCESS (Thành công)</option>
+                    <option value="FAILURE" th:selected="${status == 'FAILURE'}">FAILURE (Thất bại)</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-filter me-1"></i>Lọc</button>
+                <a th:href="@{/admin/audit-logs}" class="btn btn-outline-secondary">Đặt lại</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Audit Logs Table -->
+    <div class="card p-0 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-3">Thời điểm</th>
+                        <th>Tài khoản</th>
+                        <th>Hành động</th>
+                        <th>Địa chỉ IP</th>
+                        <th>User-Agent</th>
+                        <th>Trạng thái</th>
+                        <th class="pe-3">Chi tiết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${auditPage.empty}">
+                        <td colspan="7" class="text-center py-5 text-muted">Không có bản ghi nhật ký nào.</td>
+                    </tr>
+                    <tr th:each="a : ${auditPage.content}">
+                        <td class="ps-3 text-muted small" th:text="${#temporals.format(a.eventTime, 'dd/MM/yyyy HH:mm:ss')}">23/10/2026 21:00:00</td>
+                        <td class="fw-semibold" th:text="${a.email}">user@fpt.edu.vn</td>
+                        <td>
+                            <code class="fw-bold" th:classappend="${#strings.contains(a.action, 'FAILED') || #strings.contains(a.action, 'LOCKED')} ? 'text-danger' : 'text-primary'"
+                                  th:text="${a.action}">LOGIN_SUCCESS</code>
+                        </td>
+                        <td><span class="badge bg-light text-dark border" th:text="${a.ipAddress}">127.0.0.1</span></td>
+                        <td class="small text-muted" style="max-width: 250px;" th:text="${a.userAgent}">Mozilla/5.0...</td>
+                        <td>
+                            <span th:class="'badge ' + (${a.status == 'SUCCESS'} ? 'bg-success' : 'bg-danger')"
+                                  th:text="${a.status}">SUCCESS</span>
+                        </td>
+                        <td class="pe-3 small" th:text="${a.details}">Chi tiết sự kiện</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav th:if="${auditPage.totalPages > 1}" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${auditPage.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/audit-logs(page=${currentPage - 1}, email=${email}, action=${action}, status=${status})}">Trước</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, auditPage.totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/admin/audit-logs(page=${i}, email=${email}, action=${action}, status=${status})}" th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${auditPage.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/audit-logs(page=${currentPage + 1}, email=${email}, action=${action}, status=${status})}">Sau</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

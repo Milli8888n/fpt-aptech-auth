@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Kích hoạt 2FA thành công')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 text-center">
+            <div class="card p-5 shadow-sm">
+                <i class="bi bi-shield-fill-check text-success display-1 mb-3"></i>
+                <h2 class="h3 fw-bold text-success">Đã bật Xác thực 2 bước (2FA)!</h2>
+                <p class="text-muted mt-2">Tài khoản của bạn hiện đã được bảo vệ cấp độ cao nhất. Mỗi lần đăng nhập, hệ thống sẽ yêu cầu mã OTP từ ứng dụng của bạn.</p>
+
+                <div class="alert alert-warning text-start mt-4">
+                    <h6 class="fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> 10 Mã khôi phục dự phòng (Single-use)</h6>
+                    <p class="small text-muted mb-2">Hãy sao chép và lưu trữ danh sách mã này vào một nơi an toàn (ghi chú bảo mật, két sắt số). Mỗi mã chỉ có thể đăng nhập được duy nhất 1 lần khi bạn bị mất điện thoại:</p>
+                    <div class="bg-white p-3 rounded border">
+                        <div class="row g-2">
+                            <div class="col-6 col-sm-4" th:each="code : ${recoveryCodes}">
+                                <code class="fw-bold text-dark user-select-all" th:text="${code}">1234-5678</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a th:href="@{/}" class="btn btn-primary px-4">Về trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

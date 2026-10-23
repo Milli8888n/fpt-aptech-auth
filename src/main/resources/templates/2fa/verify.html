@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Xác thực 2 bước (2FA)')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="text-center mb-4">
+                <i class="bi bi-shield-lock-fill text-success display-4"></i>
+                <h2 class="h3 mt-2 fw-bold">Xác thực 2 bước</h2>
+                <p class="text-muted">Nhập mã xác thực để tiếp tục</p>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger shadow-sm">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}">Lỗi xác thực</span>
+            </div>
+
+            <div class="card p-4">
+                <div class="text-center mb-3">
+                    <span class="badge bg-light text-dark border px-3 py-2">
+                        <i class="bi bi-envelope me-1"></i> Tài khoản: <strong th:text="${email}">email@fpt.edu.vn</strong>
+                    </span>
+                </div>
+
+                <form th:action="@{/2fa/verify}" method="post">
+                    <div class="mb-3">
+                        <label for="code" class="form-label fw-semibold">Mã bảo mật OTP hoặc Mã khôi phục</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                            <input id="code" name="code" type="text" class="form-control form-control-lg text-center fw-bold"
+                                   placeholder="123456 hoặc 1234-5678" required autofocus>
+                        </div>
+                        <div class="form-text small text-muted">Nhập mã 6 số từ ứng dụng Authenticator hoặc 1 trong 10 mã khôi phục dự phòng của bạn.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
+                        <i class="bi bi-check2-circle me-1"></i> Xác minh &amp; Đăng nhập
+                    </button>
+                </form>
+            </div>
+
+            <div class="text-center mt-4">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-link text-decoration-none text-muted small">
+                        <i class="bi bi-box-arrow-left me-1"></i> Hủy đăng nhập &amp; Đăng xuất
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Đăng ký thành công')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card p-5 shadow-sm">
+                <i class="bi bi-envelope-check-fill text-success display-1 mb-3"></i>
+                <h2 class="h3 fw-bold">Đăng ký thành công!</h2>
+                <p class="text-muted mt-2">
+                    Chúng tôi đã gửi một liên kết xác thực đến hòm thư của bạn:
+                </p>
+                <p class="h5 text-primary fw-semibold" th:text="${email}">email@example.com</p>
+                <div class="alert alert-info mt-4 text-start">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <strong>Lưu ý:</strong>
+                    <ul class="mb-0 mt-1 small">
+                        <li>Liên kết xác thực có hiệu lực trong vòng <strong>24 giờ</strong>.</li>
+                        <li>Tài khoản đang ở trạng thái <code>PENDING</code> và chỉ có thể đăng nhập sau khi xác thực.</li>
+                        <li>Trong môi trường phát triển (Dev), bạn có thể kiểm tra email tại giao diện Mailpit: <a href="http://localhost:8025" target="_blank" class="fw-bold">http://localhost:8025</a>.</li>
+                    </ul>
+                </div>
+                <div class="mt-4">
+                    <a th:href="@{/login}" class="btn btn-outline-primary px-4 me-2">Về trang đăng nhập</a>
+                    <a th:href="@{/resend-verification}" class="btn btn-link text-decoration-none">Gửi lại email xác thực</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

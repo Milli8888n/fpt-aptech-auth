@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Hồ sơ cá nhân')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div th:if="${successMessage}" class="alert alert-success shadow-sm alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${successMessage}">Thành công</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card p-4 mb-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 64px; height: 64px; font-size: 28px;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div>
+                        <h2 class="h4 fw-bold mb-1" th:text="${user.username}">Username</h2>
+                        <span class="badge bg-success" th:text="${user.status}">ACTIVE</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th class="w-25 bg-light">Mã số tài khoản (ID)</th>
+                                <td th:text="${user.id}">1</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Tên đăng nhập</th>
+                                <td th:text="${user.username}">user</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Địa chỉ Email</th>
+                                <td th:text="${user.email}">user@fpt.edu.vn</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Vai trò hệ thống</th>
+                                <td>
+                                    <span th:each="r : ${user.roles}"
+                                          th:class="'badge me-1 ' + (${r.name == 'ROLE_ADMIN'} ? 'badge-role-admin' : (${r.name == 'ROLE_LECTURER'} ? 'badge-role-lecturer' : 'badge-role-student'))"
+                                          th:text="${r.name}">ROLE_STUDENT</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Xác thực 2 bước (2FA)</th>
+                                <td>
+                                    <span th:if="${user.totpEnabled}" class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Đang bật</span>
+                                    <span th:unless="${user.totpEnabled}" class="badge bg-secondary"><i class="bi bi-dash-circle me-1"></i>Chưa bật</span>
+                                    <a th:href="@{/2fa/setup}" class="btn btn-outline-primary btn-sm ms-2">Cấu hình 2FA</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Thời điểm tạo</th>
+                                <td th:text="${user.createdAt}">2026-10-23</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a th:href="@{/change-password}" class="btn btn-warning text-dark fw-semibold"><i class="bi bi-key me-1"></i> Đổi mật khẩu</a>
+                    <a th:href="@{/sessions}" class="btn btn-outline-secondary"><i class="bi bi-laptop me-1"></i> Thiết bị đăng nhập</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Danh sách học viên')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 fw-bold mb-1"><i class="bi bi-people text-primary me-2"></i>Danh sách học viên</h2>
+            <p class="text-muted mb-0">Khu vực Giảng viên &amp; Quản trị viên (Chế độ xem chỉ đọc)</p>
+        </div>
+        <span class="badge bg-light text-dark border px-3 py-2">
+            Tổng cộng: <strong th:text="${studentsPage.totalElements}">0</strong> học viên
+        </span>
+    </div>
+
+    <div class="card p-0 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Địa chỉ Email</th>
+                        <th>Trạng thái</th>
+                        <th>2FA</th>
+                        <th class="pe-4">Ngày đăng ký</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${studentsPage.empty}">
+                        <td colspan="6" class="text-center py-5 text-muted">Chưa có học viên nào trong hệ thống.</td>
+                    </tr>
+                    <tr th:each="s : ${studentsPage.content}">
+                        <td class="ps-4 fw-bold text-muted" th:text="${s.id}">1</td>
+                        <td class="fw-semibold" th:text="${s.username}">an.nv</td>
+                        <td th:text="${s.email}">an.nv@example.com</td>
+                        <td>
+                            <span th:class="'badge ' + (${s.status.name() == 'ACTIVE'} ? 'bg-success' : (${s.status.name() == 'PENDING'} ? 'bg-warning text-dark' : 'bg-danger'))"
+                                  th:text="${s.status}">ACTIVE</span>
+                        </td>
+                        <td>
+                            <span th:if="${s.totpEnabled}" class="badge bg-info text-dark"><i class="bi bi-shield-check me-1"></i>Đã bật</span>
+                            <span th:unless="${s.totpEnabled}" class="badge bg-secondary">Chưa bật</span>
+                        </td>
+                        <td class="pe-4 text-muted small" th:text="${s.createdAt}">2026-10-23</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav th:if="${studentsPage.totalPages > 1}" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${studentsPage.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/lecturer/students(page=${currentPage - 1})}">Trước</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, studentsPage.totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/lecturer/students(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${studentsPage.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/lecturer/students(page=${currentPage + 1})}">Sau</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Thiết lập xác thực 2 bước (2FA)')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="text-center mb-4">
+                <i class="bi bi-shield-shaded text-success display-4"></i>
+                <h2 class="h3 mt-2 fw-bold">Thiết lập Xác thực 2 bước (TOTP)</h2>
+                <p class="text-muted">Bảo vệ tài khoản bằng ứng dụng Google Authenticator hoặc Authy</p>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger shadow-sm">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}">Lỗi xác thực</span>
+            </div>
+
+            <div class="card p-4 mb-4">
+                <h5 class="fw-bold mb-3"><span class="badge bg-primary me-2">Bước 1</span> Quét mã QR bằng ứng dụng Authenticator</h5>
+                <p class="text-muted small">Mở ứng dụng Google Authenticator, Microsoft Authenticator hoặc Authy trên điện thoại của bạn và quét mã QR dưới đây:</p>
+
+                <div class="text-center my-3">
+                    <img th:src="${qrCodeUri}" alt="QR Code 2FA" class="img-thumbnail shadow-sm p-2 bg-white" style="max-width: 220px;">
+                </div>
+
+                <div class="alert alert-light border small text-center">
+                    <span class="text-muted">Không thể quét mã? Nhập thủ công mã khóa bí mật này:</span><br>
+                    <code class="fw-bold fs-6 text-dark user-select-all" th:text="${secretKey}">JBSWY3DPEHPK3PXP</code>
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="fw-bold mb-3"><span class="badge bg-primary me-2">Bước 2</span> Lưu lại 10 mã khôi phục dự phòng</h5>
+                <p class="text-muted small">Lưu lại các mã khôi phục này vào nơi an toàn. Mỗi mã chỉ sử dụng được 1 lần khi bạn bị mất quyền truy cập vào điện thoại:</p>
+
+                <div class="bg-light p-3 rounded border mb-4">
+                    <div class="row g-2">
+                        <div class="col-6 col-sm-4" th:each="code : ${recoveryCodes}">
+                            <code class="fw-bold text-secondary" th:text="${code}">1234-5678</code>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="fw-bold mb-3"><span class="badge bg-primary me-2">Bước 3</span> Xác nhận kích hoạt</h5>
+                <form th:action="@{/2fa/setup}" method="post">
+                    <div class="mb-3">
+                        <label for="code" class="form-label fw-semibold">Nhập mã 6 chữ số hiển thị trên ứng dụng</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                            <input id="code" name="code" type="text" class="form-control form-control-lg text-center fw-bold letter-spacing-2"
+                                   placeholder="123456" maxlength="6" pattern="[0-9]{6}" required autofocus>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
+                        <i class="bi bi-shield-check me-1"></i> Xác nhận &amp; Bật 2FA
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

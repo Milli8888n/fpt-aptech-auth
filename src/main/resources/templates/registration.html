@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Đăng ký tài khoản học viên')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="text-center mb-4">
+                <i class="bi bi-person-badge-fill text-warning display-4"></i>
+                <h2 class="h3 mt-2 fw-bold">Tạo tài khoản học viên</h2>
+                <p class="text-muted">Đăng ký cổng dịch vụ sinh viên FPT Aptech</p>
+            </div>
+
+            <div class="card p-4">
+                <form th:action="@{/registration}" th:object="${form}" method="post" novalidate>
+                    <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger shadow-sm">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span th:each="err : ${#fields.globalErrors()}" th:text="${err}">Lỗi đăng ký</span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold">Tên đăng nhập (Username)</label>
+                        <input th:field="*{username}" class="form-control" autocomplete="username" placeholder="Ví dụ: nguyenvanan"
+                               th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{username}">Lỗi username</div>
+                        <div class="form-text small text-muted">Từ 4-32 ký tự, chỉ gồm chữ cái, chữ số, dấu chấm, gạch dưới hoặc gạch nối.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold">Địa chỉ Email</label>
+                        <input th:field="*{email}" type="email" class="form-control" autocomplete="email" placeholder="Ví dụ: an.nv@example.com"
+                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{email}">Lỗi email</div>
+                        <div class="form-text small text-muted">Hệ thống sẽ gửi link xác thực kích hoạt 24h vào email này.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold">Mật khẩu</label>
+                        <input th:field="*{password}" type="password" class="form-control" autocomplete="new-password" placeholder="••••••••••••"
+                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{password}">Lỗi mật khẩu</div>
+                        <div class="form-text small text-muted">Tối thiểu 12 ký tự, không chứa username/email và không dùng mật khẩu phổ biến.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="passwordConfirm" class="form-label fw-semibold">Nhập lại mật khẩu</label>
+                        <input th:field="*{passwordConfirm}" type="password" class="form-control" autocomplete="new-password" placeholder="••••••••••••"
+                               th:classappend="${#fields.hasErrors('passwordConfirm')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{passwordConfirm}">Lỗi nhập lại mật khẩu</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold text-dark">
+                        <i class="bi bi-person-plus me-1"></i> Đăng ký tài khoản
+                    </button>
+                </form>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted">Đã có tài khoản? <a th:href="@{/login}" class="fw-semibold text-decoration-none">Đăng nhập ngay</a></p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

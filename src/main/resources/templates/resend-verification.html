@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Gửi lại email xác thực')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="text-center mb-4">
+                <i class="bi bi-send-check text-primary display-4"></i>
+                <h2 class="h3 mt-2 fw-bold">Gửi lại email kích hoạt</h2>
+                <p class="text-muted">Nhập email đăng ký để nhận lại link xác thực</p>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger shadow-sm">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}">Lỗi</span>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success shadow-sm">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${successMessage}">Thành công</span>
+            </div>
+
+            <div class="card p-4">
+                <form th:action="@{/resend-verification}" method="post">
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold">Địa chỉ Email học viên</label>
+                        <input id="email" name="email" type="email" class="form-control" placeholder="nhap.email@example.com" required autofocus>
+                        <div class="form-text small text-muted">Hệ thống cho phép gửi lại tối đa 3 lần mỗi giờ.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                        <i class="bi bi-envelope me-1"></i> Gửi lại link kích hoạt
+                    </button>
+                </form>
+            </div>
+
+            <div class="text-center mt-4">
+                <a th:href="@{/login}" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i> Quay lại trang đăng nhập</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

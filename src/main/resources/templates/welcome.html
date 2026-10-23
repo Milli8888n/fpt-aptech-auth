@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Trang chủ')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5">
+    <div th:if="${successMessage}" class="alert alert-success shadow-sm alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${successMessage}">Thành công</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${warningMessage}" class="alert alert-warning shadow-sm alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${warningMessage}">Cảnh báo</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Authenticated View -->
+    <div sec:authorize="isAuthenticated()" th:if="${currentUser != null}">
+        <div class="p-5 mb-4 bg-white rounded-3 shadow-sm border">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-6 fw-bold">Xin chào, <span th:text="${currentUser.username}">User</span>! 👋</h1>
+                    <p class="lead text-muted mb-3">Chào mừng bạn quay trở lại với Cổng thông tin tài khoản FPT Aptech.</p>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <span class="badge bg-success px-3 py-2"><i class="bi bi-check-circle me-1"></i>Trạng thái: <span th:text="${currentUser.status}">ACTIVE</span></span>
+                        <span th:each="r : ${currentUser.roles}"
+                              th:class="'badge px-3 py-2 ' + (${r.name == 'ROLE_ADMIN'} ? 'badge-role-admin' : (${r.name == 'ROLE_LECTURER'} ? 'badge-role-lecturer' : 'badge-role-student'))">
+                            <i class="bi bi-award me-1"></i><span th:text="${r.name}">ROLE_STUDENT</span>
+                        </span>
+                        <span th:if="${currentUser.totpEnabled}" class="badge bg-info text-dark px-3 py-2">
+                            <i class="bi bi-shield-check me-1"></i>2FA Đã bật
+                        </span>
+                        <span th:unless="${currentUser.totpEnabled}" class="badge bg-secondary px-3 py-2">
+                            <i class="bi bi-shield-slash me-1"></i>2FA Chưa bật
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end mt-4 mt-md-0">
+                    <div class="text-muted small">Email liên kết:</div>
+                    <div class="fw-bold mb-3" th:text="${currentUser.email}">email@fpt.edu.vn</div>
+                    <a th:href="@{/profile}" class="btn btn-outline-primary btn-sm"><i class="bi bi-person-gear me-1"></i>Quản lý hồ sơ</a>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="h5 fw-bold mb-3">Tiện ích tài khoản &amp; Bảo mật</h3>
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <i class="bi bi-laptop text-primary display-6 mb-2"></i>
+                        <h5 class="card-title fw-bold">Thiết bị đăng nhập</h5>
+                        <p class="card-text text-muted small">Giám sát các phiên làm việc đang chạy trên máy tính, điện thoại và đăng xuất từ xa khi cần.</p>
+                        <a th:href="@{/sessions}" class="btn btn-outline-primary btn-sm">Xem phiên hoạt động</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <i class="bi bi-shield-check text-success display-6 mb-2"></i>
+                        <h5 class="card-title fw-bold">Xác thực 2 bước (2FA)</h5>
+                        <p class="card-text text-muted small">Bảo vệ tài khoản bằng mã OTP 6 số trên Google Authenticator và bộ 10 mã khôi phục dự phòng.</p>
+                        <a th:href="@{/2fa/setup}" class="btn btn-outline-success btn-sm">Thiết lập 2FA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <i class="bi bi-key text-warning display-6 mb-2"></i>
+                        <h5 class="card-title fw-bold">Đổi mật khẩu</h5>
+                        <p class="card-text text-muted small">Cập nhật mật khẩu mới định kỳ để bảo vệ tài khoản. Hệ thống tự động hủy các phiên cũ.</p>
+                        <a th:href="@{/change-password}" class="btn btn-outline-warning text-dark btn-sm">Đổi mật khẩu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div sec:authorize="hasRole('ADMIN')" class="card bg-light border-danger p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold text-danger mb-1"><i class="bi bi-shield-lock-fill me-2"></i>Khu vực Quản trị viên (ADMIN)</h5>
+                    <p class="text-muted small mb-0">Quản lý danh sách người dùng, phân quyền vai trò, mở/khóa tài khoản và theo dõi nhật ký kiểm toán hệ thống.</p>
+                </div>
+                <div>
+                    <a th:href="@{/admin/users}" class="btn btn-danger me-2"><i class="bi bi-people me-1"></i>Quản trị User</a>
+                    <a th:href="@{/admin/audit-logs}" class="btn btn-outline-dark"><i class="bi bi-journal-text me-1"></i>Audit Logs</a>
+                </div>
+            </div>
+        </div>
+
+        <div sec:authorize="hasAnyRole('LECTURER', 'ADMIN')" class="card bg-light border-warning p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold text-warning-emphasis mb-1"><i class="bi bi-mortarboard-fill me-2"></i>Khu vực Giảng viên (LECTURER)</h5>
+                    <p class="text-muted small mb-0">Tra cứu danh sách học viên trong hệ thống (chế độ chỉ đọc).</p>
+                </div>
+                <div>
+                    <a th:href="@{/lecturer/students}" class="btn btn-warning"><i class="bi bi-list-check me-1"></i>Xem danh sách học viên</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Anonymous View -->
+    <div sec:authorize="isAnonymous()" class="p-5 mb-4 bg-white rounded-3 shadow-sm border text-center">
+        <i class="bi bi-mortarboard-fill text-warning display-3 mb-3"></i>
+        <h1 class="display-5 fw-bold">Cổng tài khoản học viên FPT Aptech</h1>
+        <p class="lead text-muted col-md-8 mx-auto">
+            Hệ thống quản lý tài khoản an toàn dành cho Học viên, Giảng viên và Quản trị viên với xác thực 2 bước (TOTP), kiểm soát phiên tập trung và bảo vệ dữ liệu chuẩn OWASP.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+            <a th:href="@{/login}" class="btn btn-primary btn-lg px-4 gap-3"><i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập</a>
+            <a th:href="@{/registration}" class="btn btn-outline-secondary btn-lg px-4"><i class="bi bi-person-plus me-1"></i>Đăng ký học viên</a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
