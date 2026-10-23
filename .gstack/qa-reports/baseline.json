@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-23",
+  "project": "fpt-aptech-auth",
+  "targetUrl": "http://localhost:8081",
+  "healthScore": 100,
+  "status": "PASSED",
+  "categoryScores": {
+    "console": 100,
+    "links": 100,
+    "functional": 100,
+    "visual": 100,
+    "ux": 98,
+    "content": 100,
+    "security": 100
+  },
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "title": "Bổ sung nút sao chép hoặc tải xuống danh sách 8 mã dự phòng 2FA",
+      "severity": "Low",
+      "category": "UX",
+      "status": "OPEN",
+      "description": "Tại màn hình /2fa/setup, danh sách 8 mã khôi phục dự phòng hiển thị dưới dạng grid 2 cột. Nên bổ sung 1 nút 'Sao chép tất cả' (Copy to Clipboard) để người dùng lưu mã dễ dàng hơn."
+    }
+  ],
+  "pagesTested": [
+    "/login",
+    "/registration",
+    "/forgot-password",
+    "/2fa/setup"
+  ]
+}
