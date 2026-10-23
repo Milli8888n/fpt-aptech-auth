@@ -14,3 +14,8 @@ target/
 ### Logs & Temp ###
 *.log
 *.tmp
+
+### Environment & Secrets ###
+.env
+.env.local
+.env.*.local
